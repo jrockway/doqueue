@@ -19,6 +19,7 @@ __PACKAGE__->set_primary_key("uid");
 # Created by DBIx::Class::Schema::Loader v0.04002 @ 2007-07-28 12:08:36
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:g4CZqaC3pkV9I9xnX3ssNg
 
+__PACKAGE__->add_unique_constraint(openid => [qw/openid/]);
+__PACKAGE__->has_many(tasks => 'DoQueue::Schema::Tasks', 'owner');
 
-# You can replace this text with custom content, and it will be preserved on regeneration
 1;

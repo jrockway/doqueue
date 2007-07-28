@@ -18,6 +18,8 @@ __PACKAGE__->add_columns(
 # Created by DBIx::Class::Schema::Loader v0.04002 @ 2007-07-28 12:08:36
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Rh17TTc1xYoBjOZDxY2Wbw
 
+__PACKAGE__->set_primary_key(qw/tid gid/);
 
-# You can replace this text with custom content, and it will be preserved on regeneration
+# index tid and gid 
+
 1;
