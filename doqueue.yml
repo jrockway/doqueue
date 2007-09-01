@@ -1,2 +1,5 @@
 ---
 name: DoQueue
+Model::DBIC:
+  connect_info:
+    - DBI:SQLite:root/database

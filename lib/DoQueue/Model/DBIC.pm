@@ -4,11 +4,7 @@ use strict;
 use base 'Catalyst::Model::DBIC::Schema';
 
 __PACKAGE__->config(
-    schema_class => 'DoQueue::Schema',
-    connect_info => [
-        'DBI:SQLite:root/database',
-        
-    ],
+    schema_class => 'DoQueue::Schema'
 );
 
 =head1 NAME

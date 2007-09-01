@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More tests => 9;
 use DoQueue::Test::Database;
+use DateTime;
 
 my $s = DoQueue::Test::Database->connect;
 sub rs { $s->resultset($_[0]) }
@@ -18,7 +19,7 @@ is_deeply([$me->tasks], [], 'no tasks for me yet');
 is_deeply([$foo->tasks], [], 'no tasks for foo yet');
 
 # create some
-my $common = { due => 0, created => 0, priority => 0 };
+my $common = { due => 0, created => DateTime->now, priority => 0 };
 
 my $task1 = rs('Tasks')->create({ %$common,
                                   owner => $me,
