@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 9;
 use DoQueue::Test::Database;
 
 my $s = DoQueue::Test::Database->connect;
@@ -50,3 +50,13 @@ sub cp { $_[0]->openid cmp $_[1]->openid }
 is(0, cp($task1->owner, $me),  'task1 owner is me');
 is(0, cp($task2->owner, $foo), 'task2 owner is foo');
 is(0, cp($task2->owner, $foo), 'task2 owner is foo');
+
+# try some metadata
+my $metadata = rs('TaskMetadata')->create({ task  => $task3,
+                                            key   => 'key',
+                                            value => 'value',
+                                          });
+
+is($metadata->task->task, 'more stuff for foo', 'metadata knows about task');
+is([$task3->metadata]->[0]->key, 'key', 'got key == key for metadata');
+
