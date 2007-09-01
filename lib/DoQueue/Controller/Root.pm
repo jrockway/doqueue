@@ -4,52 +4,47 @@ use strict;
 use warnings;
 use base 'Catalyst::Controller';
 
-#
-# Sets the actions in this controller to be registered with no prefix
-# so they function identically to actions created in MyApp.pm
-#
 __PACKAGE__->config->{namespace} = '';
-
-=head1 NAME
-
-DoQueue::Controller::Root - Root Controller for DoQueue
-
-=head1 DESCRIPTION
-
-[enter your description here]
 
 =head1 METHODS
 
-=cut
-
 =head2 default
+
+404 catch-all
 
 =cut
 
 sub default : Private {
-    my ( $self, $c ) = @_;
+    $_[1]->detach('/not_found');
+}
 
-    # Hello World
-    $c->response->body( $c->welcome_message );
+=head2 main
+
+Main page
+
+=cut
+
+sub main :Path :Args(0) {}
+
+=head2 not_found
+
+Show a 404 page.
+
+=cut
+
+sub not_found :Private {
+    my ($self, $c) = @_;
+    $c->stash->{template} = 'not_found';
+    $c->stash->{title} = 'Page Not Found';
+    $c->res->status(404);
 }
 
 =head2 end
 
-Attempt to render a view, if needed.
+Render view.
 
 =cut 
 
 sub end : ActionClass('RenderView') {}
-
-=head1 AUTHOR
-
-Jonathan T. Rockway,,,
-
-=head1 LICENSE
-
-This library is free software, you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 1;
