@@ -9,13 +9,11 @@ our @EXPORT = qw/wrapper/;
 
 sub top_msg($){
     my $msg = shift;
-    smart_tag_wrapper {
-        if (c->stash->{$msg}) {
-            p { 
-                attr { id => $msg, class => 'infobox' };
-                c->stash->{$msg};
-            };
-        } 
+    if (c->stash->{$msg}) {
+        p { 
+            attr { id => $msg};
+            c->stash->{$msg};
+        };
     }
 }
 
