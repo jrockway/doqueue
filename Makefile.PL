@@ -22,6 +22,7 @@ requires 'Catalyst::Plugin::Authentication::Store::DBIx::Class';
 requires 'Graphics::ColorUtils';
 requires 'Catalyst::Plugin::Authorization::ACL';
 requires 'Crypt::Random';
+requires 'Catalyst::Controller::REST';
 
 build_requires 'Test::TableDriven';
 build_requires 'Test::More';

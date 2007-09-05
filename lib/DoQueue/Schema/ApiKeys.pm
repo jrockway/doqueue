@@ -15,6 +15,7 @@ __PACKAGE__->add_columns(
   { data_type => "TEXT", is_nullable => 0, size => undef },                         
 );
 __PACKAGE__->set_primary_key("kid");
-__PACKAGE__->belongs_to(owner => 'DoQueue::Schema::Users', 'owner');
+__PACKAGE__->add_unique_constraint('key' => [qw/key/]);
+__PACKAGE__->belongs_to(owner => 'DoQueue::Schema::Users');
 
 1;

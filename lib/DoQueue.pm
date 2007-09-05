@@ -65,6 +65,7 @@ __PACKAGE__->acl_add_rule('/queue',
     }
 );                      
 __PACKAGE__->allow_access('/');
+__PACKAGE__->allow_access('/api'); # handles its own ACL
 __PACKAGE__->allow_access('/account');
 
 =head1 NAME
