@@ -68,6 +68,23 @@ sub set_username :Local Args(0){
     $c->view->template('account/set_username');
 }
 
+sub invalidate_api_keys :Local {
+    my ($self, $c) = @_;
+    $c->detach('/not_found') unless $c->user;
+    $c->user->api_keys->delete;
+
+    $c->view->template('account/cleared_keys');
+}
+
+sub get_api_key :Local {
+    my ($self, $c) = @_;
+    $c->detach('/not_found') unless $c->user;
+
+    my $key = $c->user->get_api_key;
+    $c->stash->{key} = $key->key;
+    $c->view->template('account/api_key');
+}
+
 sub logout :Global :Args(0) {
     my ($self, $c) = @_;
     $c->logout;

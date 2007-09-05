@@ -68,6 +68,25 @@ template 'account/set_username' => sub {
     }
 };
 
+template 'account/cleared_keys' => sub {
+    wrapper {
+        h2 { 'API keys deleted' };
+        p { "All API keys associated with your account have been ".
+              "deactivated."
+          };
+    }
+};
+
+template 'account/api_key' => sub {
+    wrapper {
+        h2 { 'API key' };
+        p { outs("Your new API key is: ");
+            tt { c->stash->{key} };
+        };
+        p { "Any other keys will continue to work until you deactivate them." };
+    }
+};
+
 template 'account/logout' => sub {
     wrapper {
         h2 { 'Logout complete' };

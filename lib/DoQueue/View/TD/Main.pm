@@ -14,7 +14,14 @@ template main => sub {
             };
             a { attr { href => c->uri_for('/queue/add') };
                 "Add a todo";
-            }
+            };
+            a { attr { href => c->uri_for('/account/get_api_key') };
+                "Get an API key";
+            };
+            a { attr { href => c->uri_for('/account/invalidate_api_keys') };
+                "Invalidate all API keys";
+            };
+              
         }
         else {
             p { "You're not logged in." };

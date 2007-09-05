@@ -6,6 +6,7 @@ use warnings;
 use DateTime;
 use DoQueue::Error::User;
 use DoQueue::Parser::Task;
+use Crypt::Random qw(makerandom);
 
 use base 'DBIx::Class';
 
@@ -23,6 +24,13 @@ __PACKAGE__->set_primary_key("uid");
 __PACKAGE__->add_unique_constraint(openid   => [qw/openid/]);
 __PACKAGE__->add_unique_constraint(username => [qw/username/]);
 __PACKAGE__->has_many(tasks => 'DoQueue::Schema::Tasks', 'owner');
+__PACKAGE__->has_many(api_keys => 'DoQueue::Schema::ApiKeys', 'owner');
+
+sub get_api_key {
+    my $self = shift;
+    my $rand = makerandom( Size => 128, Strength => 0);
+    return $self->create_related(api_keys => { key => $rand });
+}
 
 sub add_task {
     my ($self, $task_def) = @_;
