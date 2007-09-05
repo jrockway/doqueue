@@ -39,12 +39,32 @@ sub task_entity {
 
 sub tasks_GET {
     my ($self, $c) = @_;
-    my $tasks = $c->user->tasks->active;
+    my $tasks = $c->model('DBIC::Restricted::Tasks')->active;
     my @tasks;
     foreach my $task ($tasks->all) {
         push @tasks, task_entity($task);
     }
     $self->status_ok($c, entity => { tasks => [@tasks]});
+}
+
+sub tasks_DELETE {
+    my ($self, $c) = @_;
+    my $id = $c->stash->{id};
+
+    my $task = $c->model('DBIC::Restricted::Tasks')->find($id);
+    if (!$task) {
+        $self->status_not_found($c, message => "No task with id $id");
+    }
+    else {
+        my $entity = task_entity($task);
+        my $ok = eval { $task->delete };
+        if ($ok) {
+            $self->status_ok($c, entity => $entity);
+        }
+        else {
+            $self->status_bad_request($c, message => 'Failed');    
+        }
+    }
 }
 
 sub tasks_POST {
