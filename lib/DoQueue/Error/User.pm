@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use Carp;
 
+use overload '""' => sub { ${$_[0]} }; # unbox scalar reference
+
 =head1 NAME
 
 DoQueue::Error::User - errors that we can display back to the user
@@ -18,7 +20,8 @@ dies with message blessed into DoQueue::Error::User
 =cut
 
 sub throw {
-    my $error = bless $_[0] => 'DoQueue::Error::User';
+    my ($class, $msg) = @_;
+    my $error = bless \$msg => $class;
     croak $error;
 }
 
