@@ -18,7 +18,7 @@ sub fmt_metadata($) {
                 foreach my $value (@{$metadata->{$key}}){
                     my $color = 
                       c->session->{colors}{"$key|$value"} ||= 
-                        hsv2rgb((c->session->{color_idx}++*51)%360, .3, 1);
+                        hsv2rgb((c->session->{color_idx}++*101)%360, .3, 1);
                     li {
                         span {
                             attr { class => "one_metadata",
