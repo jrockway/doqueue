@@ -71,6 +71,7 @@ ul.metadata li {
 .one_metadata {
     background: #eee;
     border: 1px solid #ddd;
+    padding: 1px;
 }
 
 #my_queue ul {

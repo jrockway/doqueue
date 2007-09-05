@@ -6,8 +6,6 @@ use DoQueue::View::TD::Wrapper;
 use Template::Declare::Tags;
 use Graphics::ColorUtils;
 
-my %colors;
-my $i = 1;
 sub fmt_metadata($) {
     my $metadata = shift;
     return if keys %$metadata == 0;
@@ -19,13 +17,13 @@ sub fmt_metadata($) {
             foreach my $key (keys %$metadata){
                 foreach my $value (@{$metadata->{$key}}){
                     my $color = 
-                      $colors{"$key|$value"} ||= 
-                        hsv2rgb((51*$i++)%360, .3, 1);
+                      c->session->{colors}{"$key|$value"} ||= 
+                        hsv2rgb((51*c->session->{color_idx}++)%360, .3, 1);
                     li {
                         span {
                             attr { class => "one_metadata",
                                    style => "background-color: $color"};
-                            "$key: $value";
+                            "$key=$value";
                         }
                     }
                 }
@@ -80,9 +78,6 @@ sub add_task_form() {
 }
 
 template 'queue/show' => sub {
-    # reset colors;
-    %colors = ();
-    $i = 1;
     wrapper {
         my $user = c->stash->{user}->username ."'s";
         $user = 'your' if c->stash->{user}->id == c->user->id; 
