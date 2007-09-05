@@ -23,6 +23,7 @@ requires 'Graphics::ColorUtils';
 requires 'Catalyst::Plugin::Authorization::ACL';
 requires 'Crypt::Random';
 requires 'Catalyst::Controller::REST';
+requires 'DBIx::Class::Schema::RestrictWithObject';
 
 build_requires 'Test::TableDriven';
 build_requires 'Test::More';

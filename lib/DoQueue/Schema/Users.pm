@@ -26,6 +26,25 @@ __PACKAGE__->add_unique_constraint(username => [qw/username/]);
 __PACKAGE__->has_many(tasks => 'DoQueue::Schema::Tasks', 'owner');
 __PACKAGE__->has_many(api_keys => 'DoQueue::Schema::ApiKeys', 'owner');
 
+# restricted resultsets for use with Catalyst
+sub restrict_Tasks_resultset {
+    my $self = shift;
+    return $self->related_resultset('tasks');
+}
+
+sub restrict_TaskMetadata_resultset {
+    my $self = shift;
+    my $unrestricted = shift;
+    return $unrestricted->search_rs( { 'task.owner' => $self->id },
+                                     { join => [qw/task/] }
+                                   );
+}
+
+sub restrict_ApiKeys_resultset {
+    my $self = shift;
+    return $self->related_resultset('api_keys');
+}
+
 sub get_api_key {
     my $self = shift;
     my $rand = makerandom( Size => 128, Strength => 0);
