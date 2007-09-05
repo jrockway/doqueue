@@ -15,7 +15,7 @@ use Catalyst::Runtime '5.70';
 
 use Catalyst qw/-Debug ConfigLoader Static::Simple
                 Session Session::Store::FastMmap Session::State::Cookie
-                Authentication/;
+                Authentication Authorization::ACL/;
 
 our $VERSION = '0.01';
 
@@ -52,6 +52,20 @@ __PACKAGE__->config->{authentication} =
 
 # Start the application
 __PACKAGE__->setup;
+
+__PACKAGE__->acl_add_rule('/queue',
+    sub {
+        my ($c, $action) = @_;
+        if (eval{$c->user->username}) {
+            die $Catalyst::Plugin::Authorization::ACL::Engine::ALLOWED;
+        }
+        else {
+            die $Catalyst::Plugin::Authorization::ACL::Engine::DENIED;
+        }
+    }
+);                      
+__PACKAGE__->allow_access('/');
+__PACKAGE__->allow_access('/account');
 
 =head1 NAME
 

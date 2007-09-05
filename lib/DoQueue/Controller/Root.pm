@@ -34,8 +34,19 @@ Show a 404 page.
 
 sub not_found :Private {
     my ($self, $c) = @_;
-    $c->stash->{template} = 'not_found';
+    $c->view->template('not_found');
     $c->stash->{title} = 'Page Not Found';
+    $c->res->status(404);
+}
+
+=head2 access_denied
+
+=cut
+
+sub access_denied :Private {
+    my ($self, $c) = @_;
+    $c->view->template('not_found');
+    $c->stash->{title} = 'Access not allowed';
     $c->res->status(404);
 }
 
