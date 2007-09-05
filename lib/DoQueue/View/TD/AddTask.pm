@@ -7,7 +7,7 @@ use warnings;
 use Template::Declare::Tags;
 use DoQueue::View::TD::Wrapper;
 
-template 'add_task_form' => sub {
+template 'queue/add/task' => sub {
     wrapper {
         outs_raw(c->stash->{FormBuilder}->render);
     };

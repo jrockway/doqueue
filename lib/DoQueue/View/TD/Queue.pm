@@ -4,19 +4,31 @@ use warnings;
 
 use DoQueue::View::TD::Wrapper;
 use Template::Declare::Tags;
+use Graphics::ColorUtils;
 
+my %colors;
+my $i = 1;
 sub fmt_metadata($) {
     my $metadata = shift;
     return if keys %$metadata == 0;
     
-    div {
+    span {
         attr { class => 'task_metadata'};
         ul {
+            attr { class => 'metadata' };
             foreach my $key (keys %$metadata){
-                li {
-                    my $values = join ', ', @{$metadata->{$key}};
-                    "$key: $values";
-                };
+                foreach my $value (@{$metadata->{$key}}){
+                    my $color = 
+                      $colors{"$key|$value"} ||= 
+                        hsv2rgb((51*$i++)%360, .3, 1);
+                    li {
+                        span {
+                            attr { class => "one_metadata",
+                                   style => "background-color: $color"};
+                            "$key: $value";
+                        }
+                    }
+                }
             }
         };
     };
@@ -27,6 +39,7 @@ sub fmt_task($) {
     div { 
         attr { class => 'task' }; 
         span {
+            no warnings 'uninitialized';
             my $class = 'task_text';
             $class .= ' added' if $task->id == c->stash->{added_id};
 
@@ -66,24 +79,36 @@ sub add_task_form() {
     }
 }
 
-template show_queue => sub {
+template 'queue/show' => sub {
+    # reset colors;
+    %colors = ();
+    $i = 1;
     wrapper {
         my $user = c->stash->{user}->username ."'s";
         $user = 'your' if c->stash->{user}->id == c->user->id; 
         p { "Here's $user doqueue." };
         
-        my @tasks = @{c->stash->{tasks}};
-        if (@tasks) {
-            ul {
-                foreach my $task (@tasks) {
-                    li { fmt_task $task }
-                }
-            };
-        }
-        else {
-            p { "Your life is meaningless!  You have nothing to do!" }
-        }
-       add_task_form;
+        div {
+            attr { id => 'my_queue' };
+            my @tasks = @{c->stash->{tasks}};
+            if (@tasks) {
+                ul {
+                    foreach my $task (@tasks) {
+                        li { 
+                            fmt_task $task;
+                            p {
+                                attr { class => 'task_links' };
+                                "Here are the links";
+                            }
+                        }
+                    }
+                };
+            }
+            else {
+                p { "Your life is meaningless!  You have nothing to do!" }
+            }
+        };
+        add_task_form;
     }
 };
 

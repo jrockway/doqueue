@@ -9,10 +9,20 @@ requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Action::RenderView';
 requires 'YAML';
 requires 'DateTime';
-requires 'Catalyst::View::Template::Declare';
+requires 'Catalyst::View::Template::Declare' => '0.02';
 requires 'Catalyst::Model::DBIC::Schema';
+requires 'DBIx::Class';
 requires 'DBD::SQLite';
 requires 'DateTime::Format::MySQL';
+requires 'Catalyst::Controller::BindLex';
+requires 'Catalyst::Controller::FormBuilder';
+requires 'Catalyst::Plugin::Authentication::Credential::OpenID' => '0.03';
+requires 'Catalyst::Plugin::Authentication' => '0.10';
+requires 'Catalyst::Plugin::Authentication::Store::DBIx::Class';
+requires 'Graphics::ColorUtils';
+
+build_requires 'Test::TableDriven';
+build_requires 'Test::More';
 
 catalyst;
 

@@ -26,7 +26,7 @@ sub queue_setup :Chained('/') PathPart('queue') CaptureArgs(1) {
 
 sub display :Chained('queue_setup') PathPart('display') Args(0) {
     my ($self, $c) = @_;
-    $c->stash->{template} = 'show_queue';
+    $c->view->template('queue/show');
 }
 
 1;
