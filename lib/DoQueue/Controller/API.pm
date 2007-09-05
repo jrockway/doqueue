@@ -29,17 +29,38 @@ sub tasks :Local ActionClass('REST'){
     $c->stash->{id} = $id;
 }
 
+sub task_entity {
+    my $task = shift;
+    my @result;
+    map { push @result, $_ => $task->$_ } qw/priority task id/;
+    push @result, metadata => $task->metadata_hash;
+    return {@result};
+}
+
 sub tasks_GET {
     my ($self, $c) = @_;
     my $tasks = $c->user->tasks->active;
     my @tasks;
     foreach my $task ($tasks->all) {
-        my @result;
-        map { push @result, $_ => $task->$_ } qw/priority task/;
-        push @result, metadata => $task->metadata_hash;
-        push @tasks, {@result};
+        push @tasks, task_entity($task);
     }
     $self->status_ok($c, entity => { tasks => [@tasks]});
+}
+
+sub tasks_POST {
+    my ($self, $c) = @_;
+    my $data = $c->req->data;
+    
+    if (my $task_def = $data->{raw_task}) {
+        my $task = eval {
+            $c->user->add_task($task_def);
+        };
+        if (!$@) {
+            $self->status_ok($c, entity => task_entity($task));
+            $c->detach;
+        }
+    }
+    $self->status_bad_request($c, message => "Failed");    
 }
 
 1;
