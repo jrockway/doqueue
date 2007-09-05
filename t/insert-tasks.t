@@ -3,7 +3,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More tests => 11;
 use DoQueue::Test::Database;
 use Test::Exception;
 
@@ -36,8 +36,13 @@ is $user->tasks->count, 1, 'only one task added';
 is $task->owner->username, 'jrockway', 'task added for jrockway';
 isa_ok $task->created, 'DateTime', 'creation time isa datetime';
 
-my @metadata = $task->metadata->all;
+my @metadata = $task->metadata_rs->all;
 is scalar @metadata, 3, '3 pieces of metadata';
 
 my $baz = $task->metadata->search({ key => 'baz' })->first;
 is $baz->value, 'quux', 'baz => quux';
+
+my $metadata = $task->metadata_hash;
+is_deeply $metadata, { baz => [qw/quux/], foo => [qw/bar baz/] },
+  'got expected metadata hash';
+

@@ -29,4 +29,17 @@ __PACKAGE__->has_many(metadata => 'DoQueue::Schema::TaskMetadata', 'tid');
 # This syntax doesn't exist yet :)
 # __PACKAGE__->add_index('idx_tasks_perowner' => [qw/owner/]);
 
+sub metadata_hash {
+    my $self = shift;
+    my $metadata_rs = $self->search_related('metadata');
+
+    my %result;
+    while (my $datum = $metadata_rs->next) {
+        my ($key, $value) = map { $datum->$_ } qw/key value/;
+        $result{$key} ||= [];
+        push @{$result{$key}}, $value;
+    }
+    return \%result;
+}
+
 1;
