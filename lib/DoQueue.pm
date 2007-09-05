@@ -27,6 +27,8 @@ our $VERSION = '0.01';
 # local deployment.
 
 __PACKAGE__->config( name => 'DoQueue' );
+__PACKAGE__->config( default_view => 'TD' );
+
 
 # Start the application
 __PACKAGE__->setup;
