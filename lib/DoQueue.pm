@@ -13,7 +13,8 @@ use Catalyst::Runtime '5.70';
 # Static::Simple: will serve static files from the application's root 
 #                 directory
 
-use Catalyst qw/-Debug ConfigLoader Static::Simple/;
+use Catalyst qw/-Debug ConfigLoader Static::Simple
+                Session Session::Store::FastMmap Session::State::Cookie/;
 
 our $VERSION = '0.01';
 
@@ -28,11 +29,15 @@ our $VERSION = '0.01';
 
 __PACKAGE__->config( name => 'DoQueue' );
 __PACKAGE__->config( default_view => 'TD' );
-
+__PACKAGE__->config( session => { flash_to_stash => 1 } );
 
 # Start the application
 __PACKAGE__->setup;
 
+sub user {
+    my $c = shift;
+    return $c->model('DBIC::Users')->find(1);
+}
 
 =head1 NAME
 

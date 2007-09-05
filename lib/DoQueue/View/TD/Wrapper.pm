@@ -7,18 +7,37 @@ use Template::Declare::Tags;
 
 our @EXPORT = qw/wrapper/;
 
+sub top_msg($){
+    my $msg = shift;
+    smart_tag_wrapper {
+        if (c->stash->{$msg}) {
+            p { 
+                attr { id => $msg, class => 'infobox' };
+                c->stash->{$msg};
+            };
+        } 
+    }
+}
+
 sub wrapper(&) {
     my $content = shift;
     my $title = c->stash->{title};
-    $title = 'doQueue'. ($title ? " - $title" : q{});
+    $title = '[doqueue]'. ($title ? " - $title" : q{});
     
     smart_tag_wrapper {
         html {
             head {
-                title { $title }
+                title { $title };
+                link {
+                    attr { rel  => 'stylesheet',
+                           href => c->uri_for('/static/main.css'),
+                           type => 'text/css',
+                       };
+                };
             };
             body {
                 h1 { $title };
+                do { top_msg $_ } for qw/error message/;
                 $content->();
             };
         }

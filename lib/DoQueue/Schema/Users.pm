@@ -28,18 +28,27 @@ sub add_task {
     my ($self, $task_def) = @_;
     
     # parse the task definition
-    my $task = eval { DoQueue::Parser::Task->parse($task_def) };
+    my $parsed_task = eval { DoQueue::Parser::Task->parse($task_def) };
     DoQueue::Error::User->throw($@) if $@;
     
     my $add_task = sub {
+        # rewrite priorities
+        my $tasks = $self->related_resultset('tasks')->active;
+        my $i = 0;
+        while (my $task = $tasks->next) {
+            $task->update({ priority => $i * 2 + 1});
+            $i++;
+        }
+        
         my $created_task = $self->
-          create_related(tasks => { task     => $task->{task},
-                                    priority => $task->{order},
+          create_related(tasks => { task     => $parsed_task->{task},
+                                    priority => $parsed_task->{order},
                                     created  => DateTime->now,
                                     private  => 0,
                                  });
-        foreach my $key (keys %{$task->{metadata}}) {
-            foreach my $value (@{$task->{metadata}{$key}}) {
+        
+        foreach my $key (keys %{$parsed_task->{metadata}}) {
+            foreach my $value (@{$parsed_task->{metadata}{$key}}) {
                 $created_task->
                   create_related(metadata => { key   => $key,
                                                value => $value,

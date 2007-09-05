@@ -1,0 +1,10 @@
+name: add_task
+method: post
+fields:
+    task:
+        label: Task
+        type: text
+        length: 500
+        required: 1
+
+submit: Do it!

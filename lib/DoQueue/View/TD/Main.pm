@@ -10,6 +10,9 @@ template main => sub {
         a { attr { href => c->uri_for('/my/queue') };
             "View my queue";
         }
+        a { attr { href => c->uri_for('/queue/add') };
+            "Add a todo";
+        }
     }
 };
 

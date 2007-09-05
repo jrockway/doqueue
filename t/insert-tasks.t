@@ -45,4 +45,3 @@ is $baz->value, 'quux', 'baz => quux';
 my $metadata = $task->metadata_hash;
 is_deeply $metadata, { baz => [qw/quux/], foo => [qw/bar baz/] },
   'got expected metadata hash';
-

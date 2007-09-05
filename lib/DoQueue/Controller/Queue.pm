@@ -1,30 +1,30 @@
 package DoQueue::Controller::Queue;
 use strict;
 use warnings;
+use DoQueue::Parser::Task;
 
-use base 'Catalyst::Controller::BindLex';
+use base qw/Catalyst::Controller::BindLex/;
 
 sub my_queue :Path('/my/queue') :Args(0) {
     my ($self, $c) = @_;
     
-    # who am i?
-    my $me = $c->model('DBIC::Users')->find(1); # 1 for now
-    
-    $c->response->redirect($c->uri_for($c->action()));
+    $self->queue_setup($c, $c->user->uid);
+    $self->display($c);
     $c->detach;
 }
 
 sub queue_setup :Chained('/') PathPart('queue') CaptureArgs(1) {
     my ($self, $c, $user_id) = @_;
- 
+    
     # load user
     my $user :Stashed = $c->model('DBIC::Users')->find($user_id);
     $c->detach('/not_found') unless $user;
 
-    my $queue :Stashed = $user->tasks;
+    my $active = $user->tasks->active;
+    my @tasks :Stashed = $active->all;
 }
 
-sub display :Chained('queue_setup') PathPart('') Args(0) {
+sub display :Chained('queue_setup') PathPart('display') Args(0) {
     my ($self, $c) = @_;
     $c->stash->{template} = 'show_queue';
 }

@@ -5,7 +5,9 @@ use warnings;
 
 use base 'DBIx::Class';
 
-__PACKAGE__->load_components(qw/InflateColumn::DateTime Core/);
+__PACKAGE__->load_components(
+    qw/ResultSetManager InflateColumn::DateTime Core/
+);
 __PACKAGE__->table('tasks');
 __PACKAGE__->add_columns(
   "tid",
@@ -18,6 +20,8 @@ __PACKAGE__->add_columns(
   { data_type => "INTEGER",  is_nullable => 0, size => undef },
   "created",
   { data_type => "DATETIME", is_nullable => 0, size => undef },
+  "deleted",
+  { data_type => "DATETIME", is_nullable => 1, size => undef },         
   "private",
   { data_type => "BOOLEAN", is_nullable => 1, size => undef },
 );
@@ -28,6 +32,18 @@ __PACKAGE__->has_many(metadata => 'DoQueue::Schema::TaskMetadata', 'tid');
 
 # This syntax doesn't exist yet :)
 # __PACKAGE__->add_index('idx_tasks_perowner' => [qw/owner/]);
+
+sub deleted :ResultSet {
+    my $self = shift;
+    $self->search({ deleted => \'IS NOT NULL' }, 
+                  { order_by => \'deleted DESC' });
+}
+
+sub active :ResultSet {
+    my $self = shift;
+    $self->search({ deleted => \'IS NULL'}, 
+                  { order_by => \'priority ASC' });
+}
 
 sub metadata_hash {
     my $self = shift;
