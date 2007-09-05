@@ -14,7 +14,8 @@ use Catalyst::Runtime '5.70';
 #                 directory
 
 use Catalyst qw/-Debug ConfigLoader Static::Simple
-                Session Session::Store::FastMmap Session::State::Cookie/;
+                Session Session::Store::FastMmap Session::State::Cookie
+                Authentication/;
 
 our $VERSION = '0.01';
 
@@ -31,13 +32,26 @@ __PACKAGE__->config( name => 'DoQueue' );
 __PACKAGE__->config( default_view => 'TD' );
 __PACKAGE__->config( session => { flash_to_stash => 1 } );
 
+__PACKAGE__->config->{authentication} = 
+ {  
+  default_realm => 'openid',
+  realms => {
+             openid => {
+                        credential => {
+                                       class => 'OpenID',
+                                       use_session => 1,
+                                      },
+                        store => {
+                                  class      => 'DBIx::Class',
+                                  user_class => 'DBIC::Users',
+                                  id_field   => 'uid',
+                                 }
+                       }
+            }
+ };
+
 # Start the application
 __PACKAGE__->setup;
-
-sub user {
-    my $c = shift;
-    return $c->model('DBIC::Users')->find(1);
-}
 
 =head1 NAME
 

@@ -11,7 +11,7 @@ sub top_msg($){
     my $msg = shift;
     if (c->stash->{$msg}) {
         p { 
-            attr { id => $msg};
+            attr { id => $msg, class => 'infobox' };
             c->stash->{$msg};
         };
     }
