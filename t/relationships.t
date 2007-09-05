@@ -19,7 +19,7 @@ is_deeply([$me->tasks], [], 'no tasks for me yet');
 is_deeply([$foo->tasks], [], 'no tasks for foo yet');
 
 # create some
-my $common = { due => 0, created => DateTime->now, priority => 0 };
+my $common = { created => DateTime->now, priority => 0 };
 
 my $task1 = rs('Tasks')->create({ %$common,
                                   owner => $me,

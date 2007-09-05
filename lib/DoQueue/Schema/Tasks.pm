@@ -15,19 +15,15 @@ __PACKAGE__->add_columns(
   "task",
   { data_type => "TEXT",     is_nullable => 0, size => undef },
   "priority",
-  { data_type => "FLOAT",    is_nullable => 0, size => undef },
+  { data_type => "INTEGER",  is_nullable => 0, size => undef },
   "created",
   { data_type => "DATETIME", is_nullable => 0, size => undef },
-  "due",
-  { data_type => "DATETIME", is_nullable => 0, size => undef },
+  "private",
+  { data_type => "BOOLEAN", is_nullable => 1, size => undef },
 );
 __PACKAGE__->set_primary_key('tid');
 
 __PACKAGE__->belongs_to(owner => 'DoQueue::Schema::Users');
-__PACKAGE__->has_many(group_viewers => 'DoQueue::Schema::GroupTaskViewers',
-                      'tid');
-__PACKAGE__->has_many(user_viewers => 'DoQueue::Schema::UserTaskViewers',
-                      'tid');
 __PACKAGE__->has_many(metadata => 'DoQueue::Schema::TaskMetadata', 'tid');
 
 # This syntax doesn't exist yet :)
