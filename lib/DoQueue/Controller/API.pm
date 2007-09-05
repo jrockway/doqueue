@@ -2,9 +2,9 @@ package DoQueue::Controller::API;
 use strict;
 use warnings;
 
-use base 'Catalyst::Controller::REST';
+use base qw/Catalyst::Controller::REST Catalyst::Controller::BindLex/;
 
-__PACKAGE__->config->{serialize}{default} = 'text/x-yaml';
+__PACKAGE__->config->{serialize}{default} = 'text/x-json';
 
 sub begin : ActionClass('Deserialize') {
     my ($self, $c) = @_;
@@ -24,15 +24,59 @@ sub begin : ActionClass('Deserialize') {
     $c->user($user) if $user;
 }
 
+sub metadata :Local :Args(1) ActionClass('REST'){
+    my $self = shift;
+    my $c    = shift;
+    my $tid :Stashed = shift;
+}
+
+sub metadata_GET {
+    my ($self, $c) = @_;
+    my $tid :Stashed;
+    my @metadata = eval { $c->user->tasks->find($tid)->metadata->all };
+
+    if ($@) {
+        $self->status_not_found($c, message => "Task $tid not found");
+    }
+
+    $self->status_ok($c, entity => { metadata => 
+                                     [map { metadata_entity($_) } @metadata ]});
+}
+
+sub metadata_POST {
+    my ($self, $c) = @_;
+    my $tid :Stashed;
+    my $data = $c->req->data;
+    my $metadata = eval {
+        $c->user->tasks->find($tid)->
+          create_related(metadata => { key   => $data->{key},
+                                       value => $data->{value},
+                                     });
+    };
+    
+    if ($metadata) {
+        $self->status_ok($c, entity => metadata_entity($metadata));
+    }
+    else {
+        $self->status_bad_request($c, message => 'Failed'.$@);
+    }
+}
+
+sub metadata_entity {
+    my $metadatum = shift;
+    return { map { $_ => $metadatum->$_ } qw/id key value/ };
+}
+
 sub tasks :Local ActionClass('REST'){
-    my ($self, $c, $id) = @_;
-    $c->stash->{id} = $id;
+    my $self = shift;
+    my $c    = shift;
+    my $id :Stashed = shift;
 }
 
 sub task_entity {
     my $task = shift;
     my @result;
-    map { push @result, $_ => $task->$_ } qw/priority task id/;
+    push @result, $_ => $task->$_  for qw/priority task id/;
     push @result, metadata => $task->metadata_hash;
     return {@result};
 }
@@ -49,7 +93,7 @@ sub tasks_GET {
 
 sub tasks_DELETE {
     my ($self, $c) = @_;
-    my $id = $c->stash->{id};
+    my $id :Stashed;
 
     my $task = $c->model('DBIC::Restricted::Tasks')->find($id);
     if (!$task) {
@@ -80,7 +124,7 @@ sub tasks_POST {
             $c->detach;
         }
     }
-    $self->status_bad_request($c, message => "Failed");    
+    $self->status_bad_request($c, message => 'Failed');    
 }
 
 1;
