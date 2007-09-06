@@ -1,0 +1,14 @@
+name: edit_task
+method: post
+fields:
+    task:
+        label: Task
+        type: text
+        length: 500
+        required: 1
+    metadata:
+        label: Metadata
+        type: textarea
+        required: 0
+
+submit: Update

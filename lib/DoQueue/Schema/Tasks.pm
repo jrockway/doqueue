@@ -70,4 +70,25 @@ sub metadata_hash {
     return \%result;
 }
 
+sub update_task {
+    my $self     = shift;
+    my $task     = shift;
+    my $metadata = shift;
+
+    my $update = sub {
+        $self->update({ task => $task });
+        $self->metadata->delete;  
+        foreach my $key (keys %$metadata) {
+            foreach my $value (@{$metadata->{$key}}) {
+                $self->create_related(metadata => { tag   => $key,
+                                                    value => $value,
+                                                  });
+            }
+        }
+        return $self;
+    };   
+    
+    return $self->result_source->storage->txn_do($update);
+}
+
 1;
