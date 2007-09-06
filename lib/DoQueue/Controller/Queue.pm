@@ -21,7 +21,7 @@ sub queue_setup :Chained('/') PathPart('queue') CaptureArgs(1) {
     if (!$user) {
         # lookup by username
         $user = $c->model('DBIC::Restricted::Users')->
-          find($user_id, { key => 'username' });
+          find($user_id, { key => 'name' });
     }
     $c->detach('/not_found') unless $user;
     
