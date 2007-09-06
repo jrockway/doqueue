@@ -16,13 +16,13 @@ __PACKAGE__->add_columns(
   "uid",
   { data_type => "INTEGER", is_nullable => 0, size => undef },
   "openid",
-  { data_type => "TEXT", is_nullable => 0, size => undef },
+  { data_type => "VARCHAR", is_nullable => 0, size => 64 },
   "username",
-  { data_type => "TEXT", is_nullable => 1, size => undef },
+  { data_type => "VARCHAR", is_nullable => 1, size => 64 },
 );
 __PACKAGE__->set_primary_key("uid");
-__PACKAGE__->add_unique_constraint(openid   => [qw/openid/]);
-__PACKAGE__->add_unique_constraint(username => [qw/username/]);
+__PACKAGE__->add_unique_constraint(url  => [qw/openid/]);
+__PACKAGE__->add_unique_constraint(name => [qw/username/]);
 __PACKAGE__->has_many(tasks => 'DoQueue::Schema::Tasks', 'owner');
 __PACKAGE__->has_many(api_keys => 'DoQueue::Schema::ApiKeys', 'owner');
 

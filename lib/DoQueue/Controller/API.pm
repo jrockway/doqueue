@@ -10,7 +10,7 @@ sub begin : ActionClass('Deserialize') {
     my ($self, $c) = @_;
 
     my $key  = $c->req->header('X-DoqueueKey');
-    my $key_obj = $c->model('DBIC::ApiKeys')->find($key, {key => 'key'});
+    my $key_obj = $c->model('DBIC::ApiKeys')->find($key, {key => 'apikey'});
     my $user = eval { $key_obj->owner };
     
     # require either logged in user, or correct user+pass in headers

@@ -12,10 +12,10 @@ __PACKAGE__->add_columns(
   "owner",
   { data_type => "INTEGER", is_nullable => 0, size => undef },
   "key",
-  { data_type => "TEXT", is_nullable => 0, size => undef },                         
+  { data_type => "VARCHAR", is_nullable => 0, size => 64 },                         
 );
 __PACKAGE__->set_primary_key("kid");
-__PACKAGE__->add_unique_constraint('key' => [qw/key/]);
+__PACKAGE__->add_unique_constraint('apikey' => [qw/key/]);
 __PACKAGE__->belongs_to(owner => 'DoQueue::Schema::Users');
 
 1;

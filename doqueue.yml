@@ -2,4 +2,7 @@
 name: DoQueue
 Model::DBIC:
   connect_info:
-    - DBI:SQLite:root/database
+#    - DBI:SQLite:root/database
+     - DBI:mysql:doqueue
+     - doqueue
+     - d0queue
