@@ -14,8 +14,9 @@ sub new {
         *{"${classname}::ACCEPT_CONTEXT"} = sub {
             shift;
             my $c = shift;
+            warn $c->user;
             $c->model('DBIC')->schema->
-              restrict_with_object($c->user)->resultset($moniker);
+              restrict_with_object($c->user->get_object)->resultset($moniker);
         }
     }
     
@@ -24,7 +25,7 @@ sub new {
 
 sub ACCEPT_CONTEXT {
     my ($self, $c) = @_;
-    return $c->model('DBIC')->schema->restrict_with_object($c->user);
+    return $c->model('DBIC')->schema->restrict_with_object($c->user->get_object);
 }
 
 1;
