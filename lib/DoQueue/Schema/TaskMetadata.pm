@@ -10,10 +10,11 @@ __PACKAGE__->load_components(qw/Core/);
 __PACKAGE__->table('task_metadata');
 __PACKAGE__->add_columns(
   "mid",
-  { data_type => "INTEGER", is_nullable => 0, size => undef },
+  { data_type => "INTEGER", is_nullable => 0, size => undef,
+    is_auto_increment => 1},
   "tid",
   { data_type => "INTEGER", is_nullable => 0, size => undef },
-  "key",
+  "tag",
   { data_type => "TEXT", is_nullable => 0, size => undef },
   "value",
   { data_type => "TEXT", is_nullable => 0, size => undef },

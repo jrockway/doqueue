@@ -81,7 +81,7 @@ sub get_api_key :Local {
     $c->detach('/not_found') unless $c->user;
 
     my $key = $c->user->get_api_key;
-    $c->stash->{key} = $key->key;
+    $c->stash->{key} = $key->apikey;
     $c->view->template('account/api_key');
 }
 

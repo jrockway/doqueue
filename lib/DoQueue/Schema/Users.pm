@@ -14,7 +14,8 @@ __PACKAGE__->load_components("Core");
 __PACKAGE__->table("users");
 __PACKAGE__->add_columns(
   "uid",
-  { data_type => "INTEGER", is_nullable => 0, size => undef },
+  { data_type => "INTEGER", is_nullable => 0, size => undef,
+    is_auto_increment => 1},
   "openid",
   { data_type => "VARCHAR", is_nullable => 0, size => 64 },
   "username",
@@ -55,7 +56,7 @@ sub restrict_Users_resultset {
 sub get_api_key {
     my $self = shift;
     my $rand = makerandom( Size => 128, Strength => 0);
-    return $self->create_related(api_keys => { key => "$rand" });
+    return $self->create_related(api_keys => { apikey => "$rand" });
 }
 
 sub add_task {
@@ -84,7 +85,7 @@ sub add_task {
         foreach my $key (keys %{$parsed_task->{metadata}}) {
             foreach my $value (@{$parsed_task->{metadata}{$key}}) {
                 $created_task->
-                  create_related(metadata => { key   => $key,
+                  create_related(metadata => { tag   => $key,
                                                value => $value,
                                              });
             }

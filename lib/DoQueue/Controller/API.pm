@@ -10,7 +10,7 @@ sub begin : ActionClass('Deserialize') {
     my ($self, $c) = @_;
 
     my $key  = $c->req->header('X-DoqueueKey');
-    my $key_obj = $c->model('DBIC::ApiKeys')->find($key, {key => 'apikey'});
+    my $key_obj = $c->model('DBIC::ApiKeys')->find($key);
     my $user = eval { $key_obj->owner };
     
     # require either logged in user, or correct user+pass in headers
@@ -49,7 +49,7 @@ sub metadata :Local :Args(1) ActionClass('REST'){
 
 sub metadata_entity {
     my $metadatum = shift;
-    return { map { $_ => $metadatum->$_ } qw/id key value/ };
+    return { map { $_ => $metadatum->$_ } qw/id tag value/ };
 }
 
 sub metadata_GET {
@@ -73,7 +73,7 @@ sub metadata_POST {
     use YAML; die Dump($c->req);
     my $metadata = eval {
         $c->user->tasks->find($tid)->
-          create_related(metadata => { key   => $data->{key},
+          create_related(metadata => { tag   => $data->{key},
                                        value => $data->{value},
                                      });
     };
@@ -97,7 +97,7 @@ sub metadata_PUT {
                          sub {
                              my $metadata = shift;
                              return $metadata->
-                               update({ key   => $new->{key},
+                               update({ tag   => $new->{key},
                                         value => $new->{value},
                                       });
                          }, \&metadata_entity);

@@ -77,40 +77,83 @@ sub add_task_form() {
     }
 }
 
+sub task_links($){
+    my $task = shift;
+    p {
+        attr { class => 'task_links' };
+        my $id = $task->id;
+        
+        if ($task->deleted) {
+            a { 
+                attr { 
+                    href => c->uri_for("/task/$id/reopen");
+                };
+                'Reopen'
+            };
+            a { 
+                attr { 
+                    href => c->uri_for("/task/$id/blow_away");
+                };
+                'Delete forever'
+            }
+        }
+        else {
+            a { 
+                attr { 
+                    href => c->uri_for("/task/$id/close");
+                };
+                'Close'
+            }
+        }
+    }
+}
+
+sub render_tasks {
+    div {
+        attr { id => 'my_queue' };
+        my @tasks = @{c->stash->{tasks}};
+        if (@tasks) {
+            ul {
+                foreach my $task (@tasks) {
+                    li { 
+                        fmt_task $task;
+                        task_links $task;
+                    }
+                }
+            }
+        }
+    }
+}
+
 template 'queue/show' => sub {
     wrapper {
         my $user = c->stash->{user}->username ."'s";
         $user = 'your' if c->stash->{user}->id == c->user->id; 
-        p { "Here's $user doqueue." };
+        my $queue = 'doqueue';
+        $queue = 'deleted tasks' if (c->stash->{showing_deleted});
+        p { "Here's $user $queue." };
         
-        div {
-            attr { id => 'my_queue' };
-            my @tasks = @{c->stash->{tasks}};
-            if (@tasks) {
-                ul {
-                    foreach my $task (@tasks) {
-                        li { 
-                            fmt_task $task;
-                            p {
-                                attr { class => 'task_links' };
-                                my $id = $task->id;
-                                a { 
-                                    attr { 
-                                        href => c->uri_for("/task/$id/close");
-                                    };
-                                    'Close'
-                                }
-                                  
-                            }
-                        }
-                    }
-                };
-            }
-            else {
-                p { "Your life is meaningless!  You have nothing to do!" }
-            }
-        };
+        if (!@{c->stash->{tasks}} && !c->stash->{showing_deleted}) {
+            p { "Your life is meaningless!  You have nothing to do!" }
+        }
+        else {
+            render_tasks();
+        }
         add_task_form;
+
+        if (c->stash->{showing_deleted}) {
+            a {
+                attr { href => c->uri_for("/my/queue") };
+                'Back to your open tasks'
+            }
+        }
+        elsif (c->stash->{tasks_rs}->deleted->count > 0){
+            a {
+                my $id = c->user->id;
+                attr { href => c->uri_for("/queue/$id/deleted") };
+                'View deleted tasks'
+            }
+        } 
     }
 };
 

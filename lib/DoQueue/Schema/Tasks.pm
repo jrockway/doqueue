@@ -12,7 +12,8 @@ __PACKAGE__->load_components(
 __PACKAGE__->table('tasks');
 __PACKAGE__->add_columns(
   "tid",
-  { data_type => "INTEGER",  is_nullable => 0, size => undef },
+  { data_type => "INTEGER",  is_nullable => 0, size => undef, 
+    is_auto_increment => 1 },
   "owner",
   { data_type => "INTEGER",  is_nullable => 0, size => undef },
   "task",
@@ -62,7 +63,7 @@ sub metadata_hash {
 
     my %result;
     while (my $datum = $metadata_rs->next) {
-        my ($key, $value) = map { $datum->$_ } qw/key value/;
+        my ($key, $value) = map { $datum->$_ } qw/tag value/;
         $result{$key} ||= [];
         push @{$result{$key}}, $value;
     }
