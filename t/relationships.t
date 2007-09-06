@@ -54,10 +54,10 @@ is(0, cp($task2->owner, $foo), 'task2 owner is foo');
 
 # try some metadata
 my $metadata = rs('TaskMetadata')->create({ task  => $task3,
-                                            key   => 'key',
+                                            tag   => 'key',
                                             value => 'value',
                                           });
 
 is($metadata->task->task, 'more stuff for foo', 'metadata knows about task');
-is([$task3->metadata]->[0]->key, 'key', 'got key == key for metadata');
+is([$task3->metadata]->[0]->tag, 'key', 'got key == key for metadata');
 

@@ -14,7 +14,7 @@ my $mech = Test::WWW::Mechanize::Catalyst->new;
 my $me = $schema->resultset('Users')->create({ username => 'jrockway',
                                                openid   => 'http://jrock.us/',
                                              });
-my $api_key = $me->get_api_key->key;
+my $api_key = $me->get_api_key->apikey;
 my $task = $me->add_task('1: this is a test [foo=bar,foo=baz,bar=1]');
 
 is $task->id, '1', 'created task 1';

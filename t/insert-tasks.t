@@ -39,7 +39,7 @@ isa_ok $task->created, 'DateTime', 'creation time isa datetime';
 my @metadata = $task->metadata_rs->all;
 is scalar @metadata, 3, '3 pieces of metadata';
 
-my $baz = $task->metadata->search({ key => 'baz' })->first;
+my $baz = $task->metadata->search({ tag => 'baz' })->first;
 is $baz->value, 'quux', 'baz => quux';
 
 my $metadata = $task->metadata_hash;
