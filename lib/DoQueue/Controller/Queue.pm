@@ -17,9 +17,14 @@ sub queue_setup :Chained('/') PathPart('queue') CaptureArgs(1) {
     my ($self, $c, $user_id) = @_;
     
     # load user
-    my $user :Stashed = $c->model('DBIC::Users')->find($user_id);
+    my $user :Stashed = $c->model('DBIC::Restricted::Users')->find($user_id);
+    if (!$user) {
+        # lookup by username
+        $user = $c->model('DBIC::Restricted::Users')->
+          find($user_id, { key => 'username' });
+    }
     $c->detach('/not_found') unless $user;
-
+    
     my $active = $user->tasks->active;
     my @tasks :Stashed = $active->all;
 }

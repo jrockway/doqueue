@@ -48,7 +48,7 @@ sub restrict_ApiKeys_resultset {
 sub get_api_key {
     my $self = shift;
     my $rand = makerandom( Size => 128, Strength => 0);
-    return $self->create_related(api_keys => { key => $rand });
+    return $self->create_related(api_keys => { key => "$rand" });
 }
 
 sub add_task {
