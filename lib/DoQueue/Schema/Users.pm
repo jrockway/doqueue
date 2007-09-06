@@ -45,6 +45,13 @@ sub restrict_ApiKeys_resultset {
     return $self->related_resultset('api_keys');
 }
 
+sub restrict_Users_resultset {
+    my $self = shift;
+    my $unrestricted = shift;
+    # only allow user to see himself (TODO: friends)
+    return $unrestricted->search_rs( { uid => $self->uid } );
+}
+
 sub get_api_key {
     my $self = shift;
     my $rand = makerandom( Size => 128, Strength => 0);
