@@ -53,17 +53,18 @@ __PACKAGE__->config->{authentication} =
 # Start the application
 __PACKAGE__->setup;
 
-__PACKAGE__->acl_add_rule('/queue',
-    sub {
-        my ($c, $action) = @_;
-        if (eval{$c->user->username}) {
-            die $Catalyst::Plugin::Authorization::ACL::Engine::ALLOWED;
-        }
-        else {
-            die $Catalyst::Plugin::Authorization::ACL::Engine::DENIED;
-        }
+my $valid_user = sub {
+    my ($c, $action) = @_;
+    if (eval{$c->user->username}) {
+        die $Catalyst::Plugin::Authorization::ACL::Engine::ALLOWED;
     }
-);                      
+    else {
+        die $Catalyst::Plugin::Authorization::ACL::Engine::DENIED;
+    }
+};
+
+__PACKAGE__->acl_add_rule('/queue', $valid_user);
+__PACKAGE__->acl_add_rule('/task', $valid_user);
 __PACKAGE__->allow_access('/');
 __PACKAGE__->allow_access('/api'); # handles its own ACL
 __PACKAGE__->allow_access('/account');
