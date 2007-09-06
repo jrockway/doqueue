@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use base 'DBIx::Class';
+use DateTime;
 
 __PACKAGE__->load_components(
     qw/ResultSetManager InflateColumn::DateTime Core/
@@ -43,6 +44,16 @@ sub active :ResultSet {
     my $self = shift;
     $self->search({ deleted => \'IS NULL'}, 
                   { order_by => \'priority ASC' });
+}
+
+sub close {
+    my $task = shift;
+    $task->update({ deleted => DateTime->now });
+}
+
+sub reopen {
+    my $task = shift;
+    $task->update({ deleted => undef });
 }
 
 sub metadata_hash {

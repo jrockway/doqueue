@@ -93,7 +93,14 @@ template 'queue/show' => sub {
                             fmt_task $task;
                             p {
                                 attr { class => 'task_links' };
-                                "Here are the links";
+                                my $id = $task->id;
+                                a { 
+                                    attr { 
+                                        href => c->uri_for("/task/$id/close");
+                                    };
+                                    'Close'
+                                }
+                                  
                             }
                         }
                     }
