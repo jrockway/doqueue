@@ -9,19 +9,24 @@ template main => sub {
     wrapper {
         if (c->user) {
             p { "You're logged in as ". c->user->username. "." };
+            h2{ 'Todos' };
             a { attr { href => c->uri_for('/my/queue') };
                 "View my queue";
             };
             a { attr { href => c->uri_for('/queue/add') };
                 "Add a todo";
             };
+            h2 { 'API' };
             a { attr { href => c->uri_for('/account/get_api_key') };
                 "Get an API key";
             };
             a { attr { href => c->uri_for('/account/invalidate_api_keys') };
                 "Invalidate all API keys";
             };
-              
+            h2 { 'Account' };
+            a { attr { href => c->uri_for('/logout') };
+                "Log out";
+            }; 
         }
         else {
             p { "You're not logged in." };
