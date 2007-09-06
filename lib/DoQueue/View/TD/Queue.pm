@@ -100,10 +100,17 @@ sub task_links($){
         else {
             a { 
                 attr { 
-                    href => c->uri_for("/task/$id/close");
+                    href => c->uri_for("/task/$id/close"),
+                    class => 'close',
                 };
                 'Close'
-            }
+            };
+            a { 
+                attr { 
+                    href => c->uri_for("/task/$id/edit");
+                };
+                'Edit'
+            };
         }
     }
 }
@@ -121,6 +128,9 @@ sub render_tasks {
                     }
                 }
             }
+        }
+        else {
+            "No deleted tasks!  Get to work!";
         }
     }
 }
