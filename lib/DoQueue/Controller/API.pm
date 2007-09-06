@@ -24,21 +24,44 @@ sub begin : ActionClass('Deserialize') {
     $c->user($user) if $user;
 }
 
+sub update_entity {
+    my ($self, $c, $before, $update, $formatter) = @_;
+    
+    if (!$before) {
+        $self->status_not_found($c, message => 'Not found');
+    }
+    else {
+        my $after = eval { $update->($before) };
+        if ($after) {
+            $self->status_ok($c, entity => $formatter->($after));
+        }
+        else {
+            $self->status_bad_request($c, message => 'Failed');
+        }
+    }
+}
+
 sub metadata :Local :Args(1) ActionClass('REST'){
     my $self = shift;
     my $c    = shift;
     my $tid :Stashed = shift;
 }
 
+sub metadata_entity {
+    my $metadatum = shift;
+    return { map { $_ => $metadatum->$_ } qw/id key value/ };
+}
+
 sub metadata_GET {
     my ($self, $c) = @_;
     my $tid :Stashed;
-    my @metadata = eval { $c->user->tasks->find($tid)->metadata->all };
-
-    if ($@) {
+    my $task = $c->user->tasks->find($tid);
+    if (!$task) {
         $self->status_not_found($c, message => "Task $tid not found");
+        $c->detach;
     }
-
+    
+    my @metadata = eval { $c->user->tasks->find($tid)->metadata->all };    
     $self->status_ok($c, entity => { metadata => 
                                      [map { metadata_entity($_) } @metadata ]});
 }
@@ -47,6 +70,7 @@ sub metadata_POST {
     my ($self, $c) = @_;
     my $tid :Stashed;
     my $data = $c->req->data;
+    use YAML; die Dump($c->req);
     my $metadata = eval {
         $c->user->tasks->find($tid)->
           create_related(metadata => { key   => $data->{key},
@@ -58,14 +82,27 @@ sub metadata_POST {
         $self->status_ok($c, entity => metadata_entity($metadata));
     }
     else {
-        $self->status_bad_request($c, message => 'Failed'.$@);
+        $self->status_bad_request($c, message => 'Failed');
     }
 }
 
-sub metadata_entity {
-    my $metadatum = shift;
-    return { map { $_ => $metadatum->$_ } qw/id key value/ };
+
+# put and delete take metadata id instead of task id
+sub metadata_PUT {
+    my ($self, $c) = @_;
+    my $tid :Stashed;
+    my $new = $c->req->data;
+    my $current  = $c->model('DBIC::Restricted::TaskMetadata')->find($tid);
+    $self->update_entity($c, $current,
+                         sub {
+                             my $metadata = shift;
+                             return $metadata->
+                               update({ key   => $new->{key},
+                                        value => $new->{value},
+                                      });
+                         }, \&metadata_entity);
 }
+
 
 sub tasks :Local ActionClass('REST'){
     my $self = shift;
@@ -96,19 +133,8 @@ sub tasks_DELETE {
     my $id :Stashed;
 
     my $task = $c->model('DBIC::Restricted::Tasks')->find($id);
-    if (!$task) {
-        $self->status_not_found($c, message => "No task with id $id");
-    }
-    else {
-        my $entity = task_entity($task);
-        my $ok = eval { $task->delete };
-        if ($ok) {
-            $self->status_ok($c, entity => $entity);
-        }
-        else {
-            $self->status_bad_request($c, message => 'Failed');    
-        }
-    }
+    $self->update_entity($c, $task, 
+                         sub { $task->delete }, sub { {result => 'ok'} }); 
 }
 
 sub tasks_POST {

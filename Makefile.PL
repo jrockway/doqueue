@@ -27,6 +27,7 @@ requires 'DBIx::Class::Schema::RestrictWithObject';
 
 build_requires 'Test::TableDriven';
 build_requires 'Test::More';
+build_requires 'Directory::Scratch';
 
 catalyst;
 
