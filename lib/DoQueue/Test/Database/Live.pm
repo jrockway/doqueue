@@ -2,9 +2,6 @@ package DoQueue::Test::Database::Live;
 use strict;
 use warnings;
 
-use strict;
-use warnings;
-
 use DoQueue::Schema;
 use Directory::Scratch;
 use YAML qw(DumpFile);
@@ -29,7 +26,5 @@ BEGIN {
 sub schema { $schema };
 
 END { unlink $config };
-
-1;
 
 1;
