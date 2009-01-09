@@ -14,7 +14,7 @@ use Catalyst::Runtime '5.70';
 #                 directory
 
 use Catalyst qw/ConfigLoader Static::Simple
-                Session Session::Store::FastMmap Session::State::Cookie
+                Session::HMAC
                 Authentication Authorization::ACL/;
 
 our $VERSION = '0.01';
@@ -30,7 +30,7 @@ our $VERSION = '0.01';
 
 __PACKAGE__->config( name => 'DoQueue' );
 __PACKAGE__->config( default_view => 'TD' );
-__PACKAGE__->config( session => { flash_to_stash => 1 } );
+__PACKAGE__->config( session => { key => 'hello', flash_to_stash => 1 } );
 
 __PACKAGE__->config->{authentication} = 
  {  
